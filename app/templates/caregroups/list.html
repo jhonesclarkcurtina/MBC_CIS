@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Care Groups - Church Information System{% endblock %}
+{% block navbar_title %}Care Groups{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <h1 style="margin: 0;">
+            <i class="fas fa-sitemap" style="color: var(--secondary-color);"></i> Care Groups
+        </h1>
+        {% if current_user.is_admin() %}
+            <a href="{{ url_for('caregroups.add_caregroup') }}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Add Care Group
+            </a>
+        {% endif %}
+    </div>
+    
+    {% if caregroups %}
+        <div class="caregroup-grid">
+            {% for cg in caregroups %}
+                <a href="{{ url_for('caregroups.view_caregroup', caregroup_id=cg.id) }}" class="caregroup-card">
+                    <div class="caregroup-card-color" style="background-color: {{ cg.color }};"></div>
+                    <div class="caregroup-card-name">{{ cg.name }}</div>
+                    
+                    <div class="caregroup-card-info">
+                        <div style="margin-bottom: 0.5rem;">
+                            <strong>Leader:</strong><br>
+                            {{ cg.leader.username if cg.leader else 'Unassigned' }}
+                        </div>
+                    </div>
+                    
+                    <div class="caregroup-card-count">
+                        <i class="fas fa-users"></i> {{ cg.get_member_count() }} Members
+                    </div>
+                </a>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="card" style="text-align: center; padding: 3rem;">
+            <i class="fas fa-inbox" style="font-size: 3rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+            <p style="color: var(--text-secondary); font-size: 1.1rem;">No care groups found.</p>
+            {% if current_user.is_admin() %}
+                <a href="{{ url_for('caregroups.add_caregroup') }}" class="btn btn-success">
+                    <i class="fas fa-plus"></i> Create First Care Group
+                </a>
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

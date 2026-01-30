@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Ministry - Church Information System{% endblock %}
+{% block navbar_title %}Edit Ministry{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-edit"></i> Edit Ministry
+        </div>
+        
+        <form method="POST" action="{{ url_for('admin.edit_ministry', ministry_id=ministry.id) }}">
+            <div style="padding: 1.5rem;">
+                <div class="form-group">
+                    <label for="name">Ministry Name *</label>
+                    <input type="text" id="name" name="name" class="form-control" required value="{{ ministry.name }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="4">{{ ministry.description or '' }}</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="status">Status</label>
+                    <select id="status" name="status" class="form-control" required>
+                        <option value="active" {% if ministry.status == 'active' %}selected{% endif %}>Active</option>
+                        <option value="inactive" {% if ministry.status == 'inactive' %}selected{% endif %}>Inactive</option>
+                    </select>
+                </div>
+                
+                <div style="background-color: var(--bg-secondary); padding: 1rem; border-radius: 4px;">
+                    <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+                        <i class="fas fa-info-circle"></i> Members: <strong>{{ ministry.get_member_count() }}</strong>
+                    </p>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{{ url_for('admin.manage_ministries') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

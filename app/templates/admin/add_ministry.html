@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Add Ministry - Church Information System{% endblock %}
+{% block navbar_title %}Add Ministry{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-plus"></i> Add New Ministry
+        </div>
+        
+        <form method="POST" action="{{ url_for('admin.add_ministry') }}">
+            <div style="padding: 1.5rem;">
+                <div class="form-group">
+                    <label for="name">Ministry Name *</label>
+                    <input type="text" id="name" name="name" class="form-control" required placeholder="e.g., Youth, Adult, Choir">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" name="description" class="form-control" rows="4" placeholder="Describe the purpose and activities of this ministry..."></textarea>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{{ url_for('admin.manage_ministries') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Create Ministry
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block title %}Account Settings - Church Information System{% endblock %}
+{% block navbar_title %}Account Settings{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-user-circle"></i> Account Settings
+        </div>
+        
+        <form method="POST" action="{{ url_for('settings.update_account') }}">
+            <div style="padding: 1.5rem;">
+                <div style="background-color: var(--bg-secondary); padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem;">
+                    <p style="margin: 0; color: var(--text-secondary);">
+                        <strong>Role:</strong> {{ user.role.title() }}<br>
+                        <strong>Member Since:</strong> {{ user.created_at.strftime('%B %d, %Y') }}
+                    </p>
+                </div>
+                
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control" value="{{ user.username }}" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">New Password (leave blank to keep current)</label>
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Enter new password">
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                        Password must be at least 6 characters long.
+                    </small>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

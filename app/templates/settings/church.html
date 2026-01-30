@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Church Settings - Church Information System{% endblock %}
+{% block navbar_title %}Church Settings{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-building"></i> Church Information
+        </div>
+        
+        <form method="POST" action="{{ url_for('settings.church_settings') }}">
+            <div style="padding: 1.5rem;">
+                <div class="form-group">
+                    <label for="church_name">Church Name</label>
+                    <input type="text" id="church_name" name="church_name" class="form-control" value="{{ church_name }}" placeholder="Mountain Brook Church">
+                </div>
+                
+                <div class="form-group">
+                    <label for="church_address">Address</label>
+                    <textarea id="church_address" name="church_address" class="form-control" rows="3" placeholder="123 Main Street, City, State 12345">{{ church_address }}</textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="church_contact">Contact Information</label>
+                    <input type="text" id="church_contact" name="church_contact" class="form-control" value="{{ church_contact }}" placeholder="(123) 456-7890 or email@church.com">
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

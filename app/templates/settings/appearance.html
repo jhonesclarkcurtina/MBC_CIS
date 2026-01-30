@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Appearance Settings - Church Information System{% endblock %}
+{% block navbar_title %}Appearance Settings{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-palette"></i> Appearance Settings
+        </div>
+        
+        <div style="padding: 1.5rem;">
+            <h3 style="margin-top: 0;">Theme</h3>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem;">
+                <button class="theme-btn" data-theme="light" style="border: 2px solid var(--secondary-color); padding: 1rem; border-radius: 8px; background: white; color: #333; cursor: pointer; text-align: center;">
+                    <i class="fas fa-sun" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                    <strong>Light Mode</strong>
+                </button>
+                
+                <button class="theme-btn" data-theme="dark" style="border: 2px solid transparent; padding: 1rem; border-radius: 8px; background: #2d2d2d; color: #ecf0f1; cursor: pointer; text-align: center;">
+                    <i class="fas fa-moon" style="font-size: 2rem; margin-bottom: 0.5rem; display: block;"></i>
+                    <strong>Dark Mode</strong>
+                </button>
+            </div>
+            
+            <div style="background-color: var(--bg-secondary); padding: 1rem; border-radius: 4px;">
+                <p style="margin: 0; color: var(--text-secondary); font-size: 0.9rem;">
+                    <i class="fas fa-check-circle" style="color: var(--success-color);"></i> Your theme preference is automatically saved.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 2rem;">
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back to Dashboard
+        </a>
+    </div>
+</div>
+
+<script>
+document.querySelectorAll('.theme-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+        const theme = this.getAttribute('data-theme');
+        
+        // Update button styles
+        document.querySelectorAll('.theme-btn').forEach(b => {
+            b.style.borderColor = 'transparent';
+        });
+        this.style.borderColor = 'var(--secondary-color)';
+        
+        // Trigger theme change
+        const themeManager = new ThemeManager();
+        themeManager.applyTheme(theme);
+    });
+});
+
+// Highlight current theme on load
+window.addEventListener('load', function() {
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    const btn = document.querySelector(`[data-theme="${currentTheme}"]`);
+    if (btn) {
+        btn.style.borderColor = 'var(--secondary-color)';
+    }
+});
+</script>
+{% endblock %}

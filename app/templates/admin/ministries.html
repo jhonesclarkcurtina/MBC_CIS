@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+
+{% block title %}Manage Ministries - Church Information System{% endblock %}
+{% block navbar_title %}Manage Ministries{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+        <h1 style="margin: 0;">
+            <i class="fas fa-cross" style="color: var(--secondary-color);"></i> Manage Ministries
+        </h1>
+        <a href="{{ url_for('admin.add_ministry') }}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Add Ministry
+        </a>
+    </div>
+    
+    <div class="card">
+        <div class="card-body">
+            {% if ministries %}
+                <div style="overflow-x: auto;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Members</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ministry in ministries %}
+                                <tr>
+                                    <td><strong>{{ ministry.name }}</strong></td>
+                                    <td>{{ ministry.description or '-' }}</td>
+                                    <td>
+                                        <span style="background-color: var(--secondary-color); color: white; padding: 0.4rem 0.8rem; border-radius: 20px; font-weight: 600;">
+                                            {{ ministry.get_member_count() }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if ministry.status == 'active' %}
+                                            <span class="badge badge-success">Active</span>
+                                        {% else %}
+                                            <span class="badge badge-danger">Inactive</span>
+                                        {% endif %}
+                                    </td>
+                                    <td style="text-align: right;">
+                                        <a href="{{ url_for('admin.edit_ministry', ministry_id=ministry.id) }}" class="btn btn-sm btn-warning">
+                                            <i class="fas fa-edit"></i> Edit
+                                        </a>
+                                        {% if ministry.status == 'active' and ministry.get_member_count() == 0 %}
+                                            <form method="POST" action="{{ url_for('admin.delete_ministry', ministry_id=ministry.id) }}" style="display: inline;" onsubmit="return confirm('Delete this ministry?');">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i> Delete
+                                                </button>
+                                            </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-inbox" style="font-size: 2rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                    <p style="color: var(--text-secondary);">No ministries found.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

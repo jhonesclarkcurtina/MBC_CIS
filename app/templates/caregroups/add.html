@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Add Care Group - Church Information System{% endblock %}
+{% block navbar_title %}Add Care Group{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-plus"></i> Add New Care Group
+        </div>
+        
+        <form method="POST" action="{{ url_for('caregroups.add_caregroup') }}">
+            <div style="padding: 1.5rem;">
+                <div class="form-group">
+                    <label for="name">Care Group Name *</label>
+                    <input type="text" id="name" name="name" class="form-control" required placeholder="e.g., Yellow, Blue, Red">
+                </div>
+                
+                <div class="form-group">
+                    <label for="color">Color</label>
+                    <input type="color" id="color" name="color" class="form-control" style="height: 50px;" value="#1E90FF">
+                </div>
+                
+                <div class="form-group">
+                    <label for="leader_id">Assign Leader</label>
+                    <select id="leader_id" name="leader_id" class="form-control">
+                        <option value="">No Leader (unassigned)</option>
+                        {% for leader in leaders %}
+                            <option value="{{ leader.id }}">{{ leader.username }}</option>
+                        {% endfor %}
+                    </select>
+                    <small style="color: var(--text-secondary); display: block; margin-top: 0.5rem;">
+                        Only users with the "Leader" role are shown here.
+                    </small>
+                </div>
+            </div>
+            
+            <div class="card-footer">
+                <a href="{{ url_for('caregroups.list_caregroups') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-success">
+                    <i class="fas fa-save"></i> Create Care Group
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

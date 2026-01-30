@@ -1,0 +1,123 @@
+{% extends "base.html" %}
+
+{% block title %}{{ member.fullname }} - Church Information System{% endblock %}
+{% block navbar_title %}Member Details{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 600px;">
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem;">
+        <a href="{{ url_for('members.list_members') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        {% if current_user.is_admin() or current_user.role == 'viewer' %}
+            <a href="{{ url_for('members.edit_member', member_id=member.id) }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+        {% endif %}
+    </div>
+    
+    <div class="card">
+        <div class="card-header" style="display: flex; align-items: center; gap: 1rem;">
+            <div style="width: 50px; height: 50px; border-radius: 50%; background-color: var(--secondary-color); color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 1.5rem;">
+                {{ member.fullname[0].upper() }}
+            </div>
+            <div>
+                <h1 style="margin: 0;">{{ member.fullname }}</h1>
+                <p style="margin: 0; color: var(--text-secondary);">Member #{{ member.id }}</p>
+            </div>
+        </div>
+        
+        <div style="padding: 1.5rem;">
+            <!-- Personal Information -->
+            <h3 style="margin-top: 0;">Personal Information</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div>
+                    <label style="font-weight: 600; color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase;">Age</label>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">{{ member.age or 'Not provided' }}</p>
+                </div>
+                
+                <div>
+                    <label style="font-weight: 600; color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase;">Gender</label>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">{{ member.gender or 'Not provided' }}</p>
+                </div>
+                
+                <div>
+                    <label style="font-weight: 600; color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase;">Contact Number</label>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">
+                        {% if member.contact %}
+                            <a href="tel:{{ member.contact }}">{{ member.contact }}</a>
+                        {% else %}
+                            Not provided
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <div>
+                    <label style="font-weight: 600; color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase;">Status</label>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">
+                        {% if member.status == 'active' %}
+                            <span class="badge badge-success">Active</span>
+                        {% else %}
+                            <span class="badge badge-danger">Inactive</span>
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Address -->
+            {% if member.address %}
+                <div style="margin-bottom: 2rem;">
+                    <label style="font-weight: 600; color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase;">Address</label>
+                    <p style="margin: 0.5rem 0 0 0;">{{ member.address }}</p>
+                </div>
+            {% endif %}
+            
+            <!-- Church Information -->
+            <h3>Church Information</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 2rem;">
+                <div>
+                    <label style="font-weight: 600; color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase;">Ministry</label>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">
+                        {% if member.ministry %}
+                            <i class="fas fa-cross" style="color: var(--secondary-color);"></i> {{ member.ministry.name }}
+                        {% else %}
+                            Not assigned
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <div>
+                    <label style="font-weight: 600; color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase;">Care Group</label>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">
+                        {% if member.caregroup %}
+                            <span style="display: inline-block; padding: 0.4rem 0.8rem; border-radius: 20px; background-color: {{ member.caregroup.color }}20; color: {{ member.caregroup.color }}; font-weight: 600;">
+                                {{ member.caregroup.name }}
+                            </span>
+                        {% else %}
+                            Not assigned
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Baptism Information -->
+            {% if member.baptism_date %}
+                <div style="margin-bottom: 2rem;">
+                    <label style="font-weight: 600; color: var(--text-secondary); font-size: 0.85rem; text-transform: uppercase;">Date of Baptism</label>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 1.1rem;">
+                        <i class="fas fa-water"></i> {{ member.baptism_date.strftime('%B %d, %Y') }}
+                    </p>
+                </div>
+            {% endif %}
+            
+            <!-- Metadata -->
+            <div style="background-color: var(--bg-secondary); padding: 1rem; border-radius: 4px; margin-top: 2rem;">
+                <small style="color: var(--text-secondary);">
+                    <i class="fas fa-calendar-plus"></i> Created: {{ member.created_at.strftime('%B %d, %Y at %I:%M %p') }}<br>
+                    <i class="fas fa-sync-alt"></i> Updated: {{ member.updated_at.strftime('%B %d, %Y at %I:%M %p') }}
+                </small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

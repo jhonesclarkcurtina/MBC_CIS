@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Church Information System{% endblock %}
+{% block navbar_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1 style="margin-bottom: 2rem;">
+        <i class="fas fa-chart-line" style="color: var(--secondary-color);"></i> Dashboard
+    </h1>
+    
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-card-label">Total Members</div>
+            <div class="stat-card-value">{{ total_members }}</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <i class="fas fa-sitemap"></i>
+            </div>
+            <div class="stat-card-label">Care Groups</div>
+            <div class="stat-card-value">{{ total_caregroups }}</div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-card-icon">
+                <i class="fas fa-cross"></i>
+            </div>
+            <div class="stat-card-label">Active Ministries</div>
+            <div class="stat-card-value">{{ ministry_stats|length }}</div>
+        </div>
+    </div>
+    
+    <!-- Main Content Grid -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 2rem;">
+        <!-- Ministry Statistics -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-chart-bar"></i> Members by Ministry
+            </div>
+            <div class="card-body">
+                {% if ministry_stats %}
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Ministry</th>
+                                <th style="text-align: right;">Members</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for ministry_name, count in ministry_stats %}
+                                <tr>
+                                    <td>{{ ministry_name or 'Unassigned' }}</td>
+                                    <td style="text-align: right;">
+                                        <strong>{{ count }}</strong>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p style="color: var(--text-secondary); text-align: center; padding: 2rem 0;">
+                        <i class="fas fa-inbox"></i> No data yet
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+        
+        <!-- Care Groups Overview -->
+        <div class="card">
+            <div class="card-header">
+                <i class="fas fa-sitemap"></i> Care Groups
+            </div>
+            <div class="card-body">
+                {% if caregroups %}
+                    <div style="display: flex; flex-direction: column; gap: 1rem;">
+                        {% for cg in caregroups %}
+                            <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.75rem; background-color: var(--bg-secondary); border-radius: 4px; border-left: 4px solid {{ cg.color }};">
+                                <div>
+                                    <strong>{{ cg.name }}</strong>
+                                    <br>
+                                    <small style="color: var(--text-secondary);">
+                                        Leader: {{ cg.leader.username if cg.leader else 'Unassigned' }}
+                                    </small>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--secondary-color);">
+                                        {{ cg.get_member_count() }}
+                                    </div>
+                                    <small style="color: var(--text-secondary);">members</small>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <p style="color: var(--text-secondary); text-align: center; padding: 2rem 0;">
+                        <i class="fas fa-inbox"></i> No care groups yet
+                    </p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+    
+    <!-- Recent Members -->
+    {% if recent_members %}
+        <div class="card" style="margin-top: 2rem;">
+            <div class="card-header">
+                <i class="fas fa-clock"></i> Recent Members
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Ministry</th>
+                            <th>Care Group</th>
+                            <th>Contact</th>
+                            <th style="text-align: right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for member in recent_members %}
+                            <tr>
+                                <td>
+                                    <strong>{{ member.fullname }}</strong>
+                                    <br>
+                                    <small style="color: var(--text-secondary);">Age: {{ member.age or 'N/A' }}</small>
+                                </td>
+                                <td>{{ member.ministry.name if member.ministry else 'Unassigned' }}</td>
+                                <td>
+                                    {% if member.caregroup %}
+                                        <span class="badge badge-primary" style="background-color: {{ member.caregroup.color }}20; color: {{ member.caregroup.color }};">
+                                            {{ member.caregroup.name }}
+                                        </span>
+                                    {% else %}
+                                        <span class="badge badge-secondary">Unassigned</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ member.contact or '-' }}</td>
+                                <td style="text-align: right;">
+                                    <a href="{{ url_for('members.view_member', member_id=member.id) }}" class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="card-footer">
+                <a href="{{ url_for('members.list_members') }}" class="btn btn-primary">
+                    <i class="fas fa-arrow-right"></i> View All Members
+                </a>
+            </div>
+        </div>
+    {% endif %}
+    
+    <!-- Quick Actions -->
+    <div class="card" style="margin-top: 2rem;">
+        <div class="card-header">
+            <i class="fas fa-bolt"></i> Quick Actions
+        </div>
+        <div class="card-body">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                {% if current_user.is_admin() or current_user.role == 'viewer' %}
+                    <a href="{{ url_for('members.add_member') }}" class="btn btn-success btn-lg">
+                        <i class="fas fa-user-plus"></i> Add Member
+                    </a>
+                {% endif %}
+                
+                <a href="{{ url_for('members.list_members') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-users"></i> View Members
+                </a>
+                
+                <a href="{{ url_for('caregroups.list_caregroups') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-sitemap"></i> Care Groups
+                </a>
+                
+                {% if current_user.is_admin() %}
+                    <a href="{{ url_for('admin.manage_users') }}" class="btn btn-warning btn-lg">
+                        <i class="fas fa-user-shield"></i> Manage Users
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

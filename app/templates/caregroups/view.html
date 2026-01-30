@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}{{ caregroup.name }} - Church Information System{% endblock %}
+{% block navbar_title %}{{ caregroup.name }} Care Group{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; align-items: center;">
+        <a href="{{ url_for('caregroups.list_caregroups') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        {% if current_user.is_admin() %}
+            <a href="{{ url_for('caregroups.edit_caregroup', caregroup_id=caregroup.id) }}" class="btn btn-warning">
+                <i class="fas fa-edit"></i> Edit
+            </a>
+        {% endif %}
+    </div>
+    
+    <!-- Care Group Header -->
+    <div class="card" style="margin-bottom: 2rem;">
+        <div style="padding: 2rem; background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%); display: flex; align-items: center; gap: 2rem;">
+            <div style="width: 80px; height: 80px; border-radius: 8px; background-color: {{ caregroup.color }}; box-shadow: 0 4px 15px rgba(0,0,0,0.1);"></div>
+            <div>
+                <h1 style="margin: 0 0 0.5rem 0;">{{ caregroup.name }} Care Group</h1>
+                <p style="margin: 0.5rem 0; color: var(--text-secondary);">
+                    <i class="fas fa-user-tie"></i> Leader: {{ caregroup.leader.username if caregroup.leader else 'Unassigned' }}
+                </p>
+                <p style="margin: 0.5rem 0; color: var(--text-secondary);">
+                    <i class="fas fa-users"></i> Members: {{ members|length }}
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Members Table -->
+    <div class="card">
+        <div class="card-header">
+            <i class="fas fa-list"></i> Members in {{ caregroup.name }}
+        </div>
+        
+        <div class="card-body">
+            {% if members %}
+                <div style="overflow-x: auto;">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Age</th>
+                                <th>Gender</th>
+                                <th>Contact</th>
+                                <th>Ministry</th>
+                                <th>Status</th>
+                                <th style="text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for member in members %}
+                                {% if member.status == 'active' %}
+                                    <tr>
+                                        <td><strong>{{ member.fullname }}</strong></td>
+                                        <td>{{ member.age or '-' }}</td>
+                                        <td>{{ member.gender or '-' }}</td>
+                                        <td>
+                                            {% if member.contact %}
+                                                <a href="tel:{{ member.contact }}">{{ member.contact }}</a>
+                                            {% else %}
+                                                -
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ member.ministry.name if member.ministry else '-' }}</td>
+                                        <td>
+                                            <span class="badge badge-success">Active</span>
+                                        </td>
+                                        <td style="text-align: right;">
+                                            <a href="{{ url_for('members.view_member', member_id=member.id) }}" class="btn btn-sm btn-primary">
+                                                <i class="fas fa-eye"></i> View
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div style="text-align: center; padding: 2rem;">
+                    <i class="fas fa-inbox" style="font-size: 2rem; color: var(--text-secondary); margin-bottom: 1rem;"></i>
+                    <p style="color: var(--text-secondary);">No members in this care group yet.</p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
